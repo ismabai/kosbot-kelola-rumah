@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { NavLink, Outlet } from "react-router-dom";
+import { NavLink, Outlet, useNavigate } from "react-router-dom";
 import {
   LayoutDashboard,
   Building2,
@@ -17,6 +17,7 @@ import {
   Search,
   Plus,
   User,
+  LogOut,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -30,9 +31,11 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
+import { useAuth } from "@/contexts/AuthContext";
+import { openCustomerPortal } from "@/services/billing";
 
 const navigation = [
-  { name: "Dashboard", href: "/", icon: LayoutDashboard },
+  { name: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
   { name: "Properties", href: "/properties", icon: Building2 },
   { name: "Rooms", href: "/rooms", icon: DoorOpen },
   { name: "Tenants", href: "/tenants", icon: Users },
@@ -47,6 +50,37 @@ const navigation = [
 export default function Layout() {
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const { user, profile, signOut } = useAuth();
+  const navigate = useNavigate();
+
+  const handleManageSubscription = async () => {
+    try {
+      const url = await openCustomerPortal();
+      window.open(url, '_blank');
+    } catch (error) {
+      console.error('Error opening portal:', error);
+    }
+  };
+
+  const handleLogout = async () => {
+    await signOut();
+    navigate('/');
+  };
+
+  const getInitials = () => {
+    if (!user?.email) return 'U';
+    return user.email.substring(0, 2).toUpperCase();
+  };
+
+  const getTrialDaysLeft = () => {
+    if (!profile?.trial_end_at) return null;
+    const trialEnd = new Date(profile.trial_end_at);
+    const now = new Date();
+    const daysLeft = Math.ceil((trialEnd.getTime() - now.getTime()) / (1000 * 60 * 60 * 24));
+    return daysLeft > 0 ? daysLeft : null;
+  };
+
+  const trialDays = getTrialDaysLeft();
 
   return (
     <div className="min-h-screen bg-background">
@@ -170,9 +204,16 @@ export default function Layout() {
           </div>
 
           <div className="flex items-center gap-2">
-            <Badge variant="secondary" className="hidden sm:flex">
-              Online
-            </Badge>
+            {trialDays && profile?.status === 'trial' && (
+              <Badge variant="secondary" className="hidden sm:flex">
+                Essai: {trialDays}j restants
+              </Badge>
+            )}
+            {profile?.status === 'active' && (
+              <Badge variant="default" className="hidden sm:flex">
+                {profile.plan?.toUpperCase()}
+              </Badge>
+            )}
             
             <Button variant="ghost" size="icon" className="relative">
               <Bell className="h-5 w-5" />
@@ -183,24 +224,42 @@ export default function Layout() {
               <DropdownMenuTrigger asChild>
                 <Button variant="ghost" className="relative h-9 w-9 rounded-full">
                   <Avatar className="h-9 w-9">
-                    <AvatarFallback className="bg-primary text-primary-foreground">AD</AvatarFallback>
+                    <AvatarFallback className="bg-primary text-primary-foreground">
+                      {getInitials()}
+                    </AvatarFallback>
                   </Avatar>
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end" className="w-56 bg-popover">
-                <DropdownMenuLabel>My Account</DropdownMenuLabel>
+                <DropdownMenuLabel>
+                  <div className="flex flex-col space-y-1">
+                    <p className="text-sm font-medium">{user?.email}</p>
+                    {profile?.plan && (
+                      <p className="text-xs text-muted-foreground">
+                        Plan {profile.plan}
+                      </p>
+                    )}
+                  </div>
+                </DropdownMenuLabel>
                 <DropdownMenuSeparator />
-                <DropdownMenuItem>
-                  <User className="mr-2 h-4 w-4" />
-                  Profile
-                </DropdownMenuItem>
-                <DropdownMenuItem>
+                <DropdownMenuItem onClick={() => navigate('/settings')}>
                   <Settings className="mr-2 h-4 w-4" />
-                  Settings
+                  Paramètres
                 </DropdownMenuItem>
+                <DropdownMenuItem onClick={() => navigate('/pricing')}>
+                  <CreditCard className="mr-2 h-4 w-4" />
+                  Plans & Tarifs
+                </DropdownMenuItem>
+                {profile?.stripe_customer_id && (
+                  <DropdownMenuItem onClick={handleManageSubscription}>
+                    <Receipt className="mr-2 h-4 w-4" />
+                    Gérer l'abonnement
+                  </DropdownMenuItem>
+                )}
                 <DropdownMenuSeparator />
-                <DropdownMenuItem className="text-destructive">
-                  Log out
+                <DropdownMenuItem onClick={handleLogout} className="text-destructive">
+                  <LogOut className="mr-2 h-4 w-4" />
+                  Se déconnecter
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>

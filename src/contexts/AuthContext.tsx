@@ -9,14 +9,23 @@ interface SubscriptionInfo {
   subscription_end?: string;
 }
 
+interface Profile {
+  plan: string;
+  status: string;
+  trial_end_at: string | null;
+  stripe_customer_id: string | null;
+}
+
 interface AuthContextType {
   user: User | null;
   session: Session | null;
   subscription: SubscriptionInfo | null;
+  profile: Profile | null;
   loading: boolean;
   signInWithGoogle: () => Promise<void>;
   signOut: () => Promise<void>;
   checkSubscription: () => Promise<void>;
+  refreshProfile: () => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -25,8 +34,26 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [user, setUser] = useState<User | null>(null);
   const [session, setSession] = useState<Session | null>(null);
   const [subscription, setSubscription] = useState<SubscriptionInfo | null>(null);
+  const [profile, setProfile] = useState<Profile | null>(null);
   const [loading, setLoading] = useState(true);
   const { toast } = useToast();
+
+  const refreshProfile = async () => {
+    if (!user) return;
+    
+    try {
+      const { data, error } = await supabase
+        .from('profiles')
+        .select('plan, status, trial_end_at, stripe_customer_id')
+        .eq('id', user.id)
+        .single();
+
+      if (error) throw error;
+      setProfile(data);
+    } catch (error) {
+      console.error('Error loading profile:', error);
+    }
+  };
 
   const checkSubscription = async () => {
     if (!session) return;
@@ -53,9 +80,13 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         setUser(session?.user ?? null);
         
         if (session?.user) {
-          setTimeout(() => checkSubscription(), 0);
+          setTimeout(() => {
+            checkSubscription();
+            refreshProfile();
+          }, 0);
         } else {
           setSubscription(null);
+          setProfile(null);
         }
       }
     );
@@ -65,7 +96,10 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       setSession(session);
       setUser(session?.user ?? null);
       if (session?.user) {
-        setTimeout(() => checkSubscription(), 0);
+        setTimeout(() => {
+          checkSubscription();
+          refreshProfile();
+        }, 0);
       }
       setLoading(false);
     });
@@ -115,11 +149,13 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     <AuthContext.Provider value={{ 
       user, 
       session, 
-      subscription, 
+      subscription,
+      profile, 
       loading, 
       signInWithGoogle, 
       signOut,
-      checkSubscription 
+      checkSubscription,
+      refreshProfile 
     }}>
       {children}
     </AuthContext.Provider>
