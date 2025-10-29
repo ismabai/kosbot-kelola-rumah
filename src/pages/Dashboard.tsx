@@ -1,57 +1,16 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Building2, Users, Receipt, Wrench, TrendingUp, DoorOpen } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-
-const kpiData = [
-  {
-    title: "Occupancy Rate",
-    value: "87%",
-    change: "+5%",
-    trend: "up",
-    icon: DoorOpen,
-    color: "text-primary",
-  },
-  {
-    title: "Monthly Income",
-    value: "IDR 45.2M",
-    change: "+12%",
-    trend: "up",
-    icon: TrendingUp,
-    color: "text-success",
-  },
-  {
-    title: "Pending Payments",
-    value: "8",
-    change: "-3",
-    trend: "down",
-    icon: Receipt,
-    color: "text-warning",
-  },
-  {
-    title: "Open Tickets",
-    value: "5",
-    change: "-2",
-    trend: "down",
-    icon: Wrench,
-    color: "text-accent",
-  },
-];
-
-const recentTasks = [
-  { id: 1, title: "Follow up payment Room 204", priority: "high", dueDate: "Today" },
-  { id: 2, title: "Fix AC in Room 301", priority: "medium", dueDate: "Tomorrow" },
-  { id: 3, title: "Lease renewal - Mr. Ahmad", priority: "medium", dueDate: "In 3 days" },
-  { id: 4, title: "Property inspection - Building A", priority: "low", dueDate: "Next week" },
-];
-
-const quickStats = [
-  { label: "Total Properties", value: "3", icon: Building2 },
-  { label: "Total Rooms", value: "48", icon: DoorOpen },
-  { label: "Active Tenants", value: "42", icon: Users },
-];
+import { useDashboardData } from "@/hooks/useDashboardData";
+import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 
 export default function Dashboard() {
+  const { kpis: kpiData, quick: quickStats, tasks: recentTasks, revenue, loading } = useDashboardData();
+
+  if (loading) {
+    return <div className="flex items-center justify-center min-h-[400px]">Loading dashboard...</div>;
+  }
+
   return (
     <div className="space-y-6 animate-in">
       {/* Page Header */}
@@ -89,9 +48,15 @@ export default function Dashboard() {
             <CardDescription>Monthly income over the last 6 months</CardDescription>
           </CardHeader>
           <CardContent>
-            <div className="h-64 flex items-center justify-center bg-secondary rounded-lg">
-              <p className="text-muted-foreground">Chart visualization coming soon</p>
-            </div>
+            <ResponsiveContainer width="100%" height={240}>
+              <LineChart data={revenue}>
+                <CartesianGrid strokeDasharray="3 3" className="stroke-muted" />
+                <XAxis dataKey="month" className="text-xs" />
+                <YAxis className="text-xs" />
+                <Tooltip />
+                <Line type="monotone" dataKey="amount" stroke="hsl(var(--primary))" strokeWidth={2} />
+              </LineChart>
+            </ResponsiveContainer>
           </CardContent>
         </Card>
 
