@@ -36,7 +36,14 @@ export const AuthGate = () => {
     return <Navigate to="/" replace />;
   }
 
-  const showAlert = profile?.status === 'past_due' || profile?.status === 'expired';
+  // Allow access for trial, active, past_due users. Only block expired and canceled.
+  const isBlocked = profile?.status === 'expired' || profile?.status === 'canceled';
+  
+  if (isBlocked) {
+    return <Navigate to="/pricing" replace />;
+  }
+
+  const showAlert = profile?.status === 'past_due';
 
   return (
     <>

@@ -18,6 +18,7 @@ import Tickets from "./pages/Tickets";
 import Tasks from "./pages/Tasks";
 import Settings from "./pages/Settings";
 import Pricing from "./pages/Pricing";
+import AuthCallback from "./pages/AuthCallback";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -32,6 +33,7 @@ const App = () => (
           <Routes>
             <Route path="/" element={<Landing />} />
             <Route path="/pricing" element={<Pricing />} />
+            <Route path="/auth/callback" element={<AuthCallback />} />
             <Route element={<AuthGate />}>
               <Route element={<Layout />}>
                 <Route path="/dashboard" element={<Dashboard />} />

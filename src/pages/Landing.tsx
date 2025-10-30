@@ -108,7 +108,8 @@ export default function Landing() {
     }
   };
 
-  if (user && subscription?.subscribed) {
+  // Redirect authenticated users to dashboard
+  if (user) {
     navigate('/dashboard');
     return null;
   }

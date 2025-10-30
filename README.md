@@ -67,13 +67,36 @@ In your Stripe Dashboard, create three products with the following Price IDs (al
 
 ## Google OAuth Setup
 
+### IMPORTANT: Redirect URI Configuration
+
+Your app uses the following redirect URI for Google OAuth:
+```
+https://wkjmvyenixntlhcsjpzy.supabase.co/auth/v1/callback
+```
+
+### Setup Steps:
+
 1. Go to [Google Cloud Console](https://console.cloud.google.com/)
 2. Create a new project (or select existing)
-3. Enable Google+ API
-4. Create OAuth 2.0 credentials:
-   - Authorized JavaScript origins: Your app URL
-   - Authorized redirect URIs: `https://wkjmvyenixntlhcsjpzy.supabase.co/auth/v1/callback`
-5. Configure in Lovable Cloud Dashboard → Authentication → Google Settings
+3. Go to APIs & Services → Credentials
+4. Click "Create Credentials" → "OAuth Client ID"
+5. Select "Web application"
+6. Configure:
+   - **Authorized JavaScript origins**: 
+     - `http://localhost:5173` (for development)
+     - Your production domain (e.g., `https://yourapp.lovable.app`)
+   - **Authorized redirect URIs**: 
+     - `https://wkjmvyenixntlhcsjpzy.supabase.co/auth/v1/callback`
+7. Copy the Client ID and Client Secret
+8. Configure in Lovable Cloud:
+   - Click "View Backend" button
+   - Go to Users → Auth Settings → Google Settings
+   - Paste your Client ID and Client Secret
+   - Save
+
+### Auto-Confirm Email
+
+For development and testing, email confirmation is already set to auto-confirm. This means users can immediately access the app after signing in with Google without having to verify their email address.
 
 ## Database Schema
 

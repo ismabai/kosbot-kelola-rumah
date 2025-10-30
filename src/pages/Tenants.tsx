@@ -87,23 +87,30 @@ export default function Tenants() {
     if (!user) return;
 
     try {
-      const { error } = await supabase.from('tenants').insert({
-        owner_id: user.id,
-        property_id: formData.property_id,
-        room_id: formData.room_id || null,
-        full_name: formData.full_name,
-        phone: formData.phone,
-        start_date: formData.start_date,
-        deposit_amount: parseFloat(formData.deposit_amount),
-      });
+      const { data: newTenant, error } = await supabase
+        .from('tenants')
+        .insert({
+          owner_id: user.id,
+          property_id: formData.property_id,
+          room_id: formData.room_id || null,
+          full_name: formData.full_name,
+          phone: formData.phone,
+          start_date: formData.start_date,
+          deposit_amount: parseFloat(formData.deposit_amount),
+        })
+        .select()
+        .single();
 
       if (error) throw error;
 
-      // Update room status if room is selected
-      if (formData.room_id) {
+      // Update room status and tenant_id if room is selected
+      if (formData.room_id && newTenant) {
         await supabase
           .from('rooms')
-          .update({ status: 'occupied' })
+          .update({ 
+            status: 'occupied',
+            tenant_id: newTenant.id 
+          })
           .eq('id', formData.room_id);
       }
 
