@@ -115,49 +115,66 @@ export default function Landing() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-subtle">
+    <div className="min-h-screen bg-gradient-subtle relative overflow-hidden">
+      {/* Animated background blobs */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        <div className="absolute top-0 left-1/4 w-96 h-96 bg-gradient-primary opacity-20 rounded-full blur-3xl animate-float" style={{ animationDelay: '0s' }} />
+        <div className="absolute top-1/3 right-1/4 w-96 h-96 bg-gradient-secondary opacity-20 rounded-full blur-3xl animate-float" style={{ animationDelay: '2s' }} />
+        <div className="absolute bottom-1/4 left-1/3 w-96 h-96 bg-gradient-accent opacity-15 rounded-full blur-3xl animate-float" style={{ animationDelay: '4s' }} />
+      </div>
+
       {/* Banner */}
-      <div className="bg-gradient-primary text-white py-2 px-4 text-center text-sm font-medium animate-in">
+      <div className="relative bg-gradient-primary text-white py-2 px-4 text-center text-sm font-medium animate-in shimmer">
         ✨ Essai gratuit 7 jours — sans carte bancaire
       </div>
 
       {/* Header */}
-      <header className="sticky top-0 z-50 bg-background/80 backdrop-blur-lg border-b border-border">
+      <header className="relative sticky top-0 z-50 bg-background/80 backdrop-blur-lg border-b border-border">
         <div className="container mx-auto px-4 py-4 flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <div className="w-8 h-8 bg-gradient-primary rounded-lg" />
-            <span className="text-xl font-bold">KosBot</span>
+          <div className="flex items-center gap-2 animate-in">
+            <div className="w-8 h-8 bg-gradient-primary rounded-lg animate-gradient shadow-glow" />
+            <span className="text-xl font-bold gradient-text">KosBot</span>
           </div>
-          <Button onClick={signInWithGoogle} variant="outline">
+          <Button onClick={signInWithGoogle} variant="outline" className="transition-all hover:shadow-glow hover:border-primary">
             Se connecter avec Google
           </Button>
         </div>
       </header>
 
       {/* Hero Section */}
-      <section className="container mx-auto px-4 py-20 text-center animate-in">
-        <h1 className="text-5xl md:text-6xl font-bold mb-6 bg-gradient-primary bg-clip-text text-transparent">
-          Gérez vos kos-kosan
-          <br />
-          en toute simplicité
-        </h1>
-        <p className="text-xl text-muted-foreground mb-8 max-w-2xl mx-auto">
-          Automatisez vos paiements, suivez vos locataires et maximisez votre taux d'occupation. 
-          Pendant que KosBot travaille pour vous.
-        </p>
-        <Button size="lg" onClick={signInWithGoogle} className="animate-scale-in">
-          Essayer gratuitement
-          <ArrowRight className="ml-2 h-5 w-5" />
-        </Button>
+      <section className="relative container mx-auto px-4 py-20 text-center animate-in">
+        <div className="relative z-10">
+          <h1 className="text-5xl md:text-7xl font-bold mb-6 bg-[linear-gradient(135deg,hsl(189_85%_45%)_0%,hsl(213_94%_68%)_50%,hsl(280_85%_55%)_100%)] bg-clip-text text-transparent animate-gradient bg-[length:200%_200%]">
+            Gérez vos kos-kosan
+            <br />
+            en toute simplicité
+          </h1>
+          <p className="text-xl text-muted-foreground mb-8 max-w-2xl mx-auto animate-in" style={{ animationDelay: '0.1s' }}>
+            Automatisez vos paiements, suivez vos locataires et maximisez votre taux d'occupation. 
+            Pendant que KosBot travaille pour vous.
+          </p>
+          <Button 
+            size="lg" 
+            onClick={signInWithGoogle} 
+            className="animate-scale-in bg-gradient-primary hover:bg-gradient-hover shadow-glow transition-all hover:scale-105 hover:shadow-[0_0_40px_hsl(189_85%_45%/0.4)]"
+            style={{ animationDelay: '0.2s' }}
+          >
+            Essayer gratuitement
+            <ArrowRight className="ml-2 h-5 w-5" />
+          </Button>
+        </div>
       </section>
 
       {/* Features Section */}
-      <section className="container mx-auto px-4 py-20">
+      <section className="relative container mx-auto px-4 py-20">
         <div className="grid md:grid-cols-3 gap-8">
-          <Card className="card-hover">
+          <Card className="card-hover border-2 border-transparent hover:border-primary/20 bg-gradient-to-br from-card to-card/50 backdrop-blur-sm animate-in" style={{ animationDelay: '0s' }}>
             <CardHeader>
-              <Zap className="h-12 w-12 text-primary mb-4" />
-              <CardTitle>Automatisation complète</CardTitle>
+              <div className="relative">
+                <div className="absolute inset-0 bg-gradient-primary opacity-20 blur-xl rounded-full" />
+                <Zap className="h-12 w-12 text-primary mb-4 relative z-10 animate-float" />
+              </div>
+              <CardTitle className="bg-gradient-primary bg-clip-text text-transparent">Automatisation complète</CardTitle>
             </CardHeader>
             <CardContent>
               <p className="text-muted-foreground">
@@ -166,10 +183,13 @@ export default function Landing() {
             </CardContent>
           </Card>
 
-          <Card className="card-hover">
+          <Card className="card-hover border-2 border-transparent hover:border-accent/20 bg-gradient-to-br from-card to-card/50 backdrop-blur-sm animate-in" style={{ animationDelay: '0.1s' }}>
             <CardHeader>
-              <BarChart className="h-12 w-12 text-primary mb-4" />
-              <CardTitle>Suivi en temps réel</CardTitle>
+              <div className="relative">
+                <div className="absolute inset-0 bg-gradient-accent opacity-20 blur-xl rounded-full" />
+                <BarChart className="h-12 w-12 text-accent mb-4 relative z-10 animate-float" style={{ animationDelay: '1s' }} />
+              </div>
+              <CardTitle className="bg-gradient-accent bg-clip-text text-transparent">Suivi en temps réel</CardTitle>
             </CardHeader>
             <CardContent>
               <p className="text-muted-foreground">
@@ -178,10 +198,13 @@ export default function Landing() {
             </CardContent>
           </Card>
 
-          <Card className="card-hover">
+          <Card className="card-hover border-2 border-transparent hover:border-success/20 bg-gradient-to-br from-card to-card/50 backdrop-blur-sm animate-in" style={{ animationDelay: '0.2s' }}>
             <CardHeader>
-              <Shield className="h-12 w-12 text-primary mb-4" />
-              <CardTitle>Données sécurisées</CardTitle>
+              <div className="relative">
+                <div className="absolute inset-0 bg-gradient-secondary opacity-20 blur-xl rounded-full" />
+                <Shield className="h-12 w-12 text-success mb-4 relative z-10 animate-float" style={{ animationDelay: '2s' }} />
+              </div>
+              <CardTitle className="bg-gradient-secondary bg-clip-text text-transparent">Données sécurisées</CardTitle>
             </CardHeader>
             <CardContent>
               <p className="text-muted-foreground">
@@ -193,20 +216,25 @@ export default function Landing() {
       </section>
 
       {/* Pricing Section */}
-      <section className="container mx-auto px-4 py-20">
-        <div className="text-center mb-12">
-          <h2 className="text-4xl font-bold mb-4">Choisissez votre plan</h2>
-          <p className="text-muted-foreground">Commencez gratuitement, évoluez selon vos besoins</p>
+      <section className="relative container mx-auto px-4 py-20">
+        <div className="text-center mb-12 animate-in">
+          <h2 className="text-4xl md:text-5xl font-bold mb-4 gradient-text">Choisissez votre plan</h2>
+          <p className="text-lg text-muted-foreground">Commencez gratuitement, évoluez selon vos besoins</p>
         </div>
 
         <div className="grid md:grid-cols-3 gap-8 max-w-6xl mx-auto">
-          {Object.entries(PLANS).map(([key, plan]) => (
+          {Object.entries(PLANS).map(([key, plan], index) => (
             <Card 
               key={key} 
-              className={`relative card-hover ${plan.popular ? 'border-primary border-2' : ''}`}
+              className={`relative card-hover bg-gradient-to-br from-card to-card/50 backdrop-blur-sm transition-all animate-in ${
+                plan.popular 
+                  ? 'border-primary border-2 shadow-glow scale-105' 
+                  : 'border-2 border-transparent hover:border-primary/20'
+              }`}
+              style={{ animationDelay: `${index * 0.1}s` }}
             >
               {plan.popular && (
-                <div className="absolute -top-4 left-1/2 -translate-x-1/2 bg-primary text-primary-foreground px-4 py-1 rounded-full text-sm font-medium">
+                <div className="absolute -top-4 left-1/2 -translate-x-1/2 bg-gradient-primary text-white px-4 py-1 rounded-full text-sm font-medium shadow-glow animate-scale-in">
                   Plus populaire
                 </div>
               )}
@@ -230,7 +258,11 @@ export default function Landing() {
               </CardContent>
               <CardFooter>
                 <Button 
-                  className="w-full" 
+                  className={`w-full transition-all ${
+                    plan.popular 
+                      ? 'bg-gradient-primary hover:bg-gradient-hover shadow-glow hover:shadow-[0_0_40px_hsl(189_85%_45%/0.4)] hover:scale-105' 
+                      : 'hover:border-primary hover:shadow-glow'
+                  }`}
                   variant={plan.popular ? 'default' : 'outline'}
                   onClick={() => handleSubscribe(plan.priceId, plan.name)}
                   disabled={loadingPlan === plan.name}
@@ -244,9 +276,9 @@ export default function Landing() {
       </section>
 
       {/* FAQ Section */}
-      <section className="container mx-auto px-4 py-20">
+      <section className="relative container mx-auto px-4 py-20">
         <div className="max-w-3xl mx-auto">
-          <h2 className="text-4xl font-bold text-center mb-12">Questions fréquentes</h2>
+          <h2 className="text-4xl md:text-5xl font-bold text-center mb-12 gradient-text animate-in">Questions fréquentes</h2>
           <Accordion type="single" collapsible className="space-y-4">
             <AccordionItem value="trial">
               <AccordionTrigger>Comment fonctionne l'essai gratuit ?</AccordionTrigger>
@@ -292,12 +324,12 @@ export default function Landing() {
       </section>
 
       {/* Footer */}
-      <footer className="border-t border-border bg-card">
+      <footer className="relative border-t border-border bg-card/50 backdrop-blur-sm">
         <div className="container mx-auto px-4 py-8">
           <div className="flex flex-col md:flex-row justify-between items-center gap-4">
             <div className="flex items-center gap-2">
-              <div className="w-6 h-6 bg-gradient-primary rounded-lg" />
-              <span className="font-semibold">KosBot</span>
+              <div className="w-6 h-6 bg-gradient-primary rounded-lg animate-gradient shadow-glow" />
+              <span className="font-semibold gradient-text">KosBot</span>
             </div>
             <div className="flex gap-6 text-sm text-muted-foreground">
               <a href="mailto:contact@kosbot.id" className="hover:text-foreground transition-colors">
