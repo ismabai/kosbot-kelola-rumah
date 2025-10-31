@@ -115,21 +115,24 @@ export default function Landing() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-subtle relative overflow-hidden">
-      {/* Animated background blobs */}
-      <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute top-0 left-1/4 w-96 h-96 bg-gradient-primary opacity-20 rounded-full blur-3xl animate-float" style={{ animationDelay: '0s' }} />
-        <div className="absolute top-1/3 right-1/4 w-96 h-96 bg-gradient-secondary opacity-20 rounded-full blur-3xl animate-float" style={{ animationDelay: '2s' }} />
-        <div className="absolute bottom-1/4 left-1/3 w-96 h-96 bg-gradient-accent opacity-15 rounded-full blur-3xl animate-float" style={{ animationDelay: '4s' }} />
+    <div className="min-h-screen bg-background relative overflow-hidden">
+      {/* Dark overlay for better contrast */}
+      <div className="absolute inset-0 bg-gradient-to-b from-background via-background/95 to-background/90" />
+      
+      {/* Animated background blobs - repositioned away from content */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none -z-10">
+        <div className="absolute -top-48 -left-48 w-[600px] h-[600px] bg-gradient-primary opacity-10 rounded-full blur-[100px] animate-float" style={{ animationDelay: '0s' }} />
+        <div className="absolute top-1/4 -right-48 w-[600px] h-[600px] bg-gradient-secondary opacity-10 rounded-full blur-[100px] animate-float" style={{ animationDelay: '2s' }} />
+        <div className="absolute -bottom-48 left-1/4 w-[600px] h-[600px] bg-gradient-accent opacity-8 rounded-full blur-[100px] animate-float" style={{ animationDelay: '4s' }} />
       </div>
 
       {/* Banner */}
-      <div className="relative bg-gradient-primary text-white py-2 px-4 text-center text-sm font-medium animate-in shimmer">
+      <div className="relative bg-gradient-primary/90 backdrop-blur-xl text-white py-2 px-4 text-center text-sm font-medium animate-in shadow-lg z-50">
         ✨ Essai gratuit 7 jours — sans carte bancaire
       </div>
 
       {/* Header */}
-      <header className="relative sticky top-0 z-50 bg-background/95 backdrop-blur-lg border-b border-border">
+      <header className="relative sticky top-0 z-50 bg-card/80 backdrop-blur-2xl border-b border-border shadow-lg">
         <div className="container mx-auto px-4 py-4 flex items-center justify-between">
           <div className="flex items-center gap-2 animate-in">
             <div className="w-8 h-8 bg-gradient-primary rounded-lg animate-gradient shadow-glow" />
@@ -170,7 +173,7 @@ export default function Landing() {
       {/* Features Section */}
       <section className="relative container mx-auto px-4 py-20">
         <div className="grid md:grid-cols-3 gap-8">
-          <Card className="card-hover border-2 border-transparent hover:border-primary/30 bg-gradient-to-br from-card via-primary/5 to-card backdrop-blur-sm animate-in" style={{ animationDelay: '0s' }}>
+          <Card className="card-hover border-2 border-transparent hover:border-primary/30 bg-card/60 backdrop-blur-3xl animate-in shadow-xl" style={{ animationDelay: '0s' }}>
             <CardHeader>
               <div className="relative">
                 <div className="absolute inset-0 bg-gradient-primary opacity-20 blur-xl rounded-full" />
@@ -185,7 +188,7 @@ export default function Landing() {
             </CardContent>
           </Card>
 
-          <Card className="card-hover border-2 border-transparent hover:border-accent/30 bg-gradient-to-br from-card via-accent/5 to-card backdrop-blur-sm animate-in" style={{ animationDelay: '0.1s' }}>
+          <Card className="card-hover border-2 border-transparent hover:border-accent/30 bg-card/60 backdrop-blur-3xl animate-in shadow-xl" style={{ animationDelay: '0.1s' }}>
             <CardHeader>
               <div className="relative">
                 <div className="absolute inset-0 bg-gradient-accent opacity-20 blur-xl rounded-full" />
@@ -200,7 +203,7 @@ export default function Landing() {
             </CardContent>
           </Card>
 
-          <Card className="card-hover border-2 border-transparent hover:border-success/30 bg-gradient-to-br from-card via-success/5 to-card backdrop-blur-sm animate-in" style={{ animationDelay: '0.2s' }}>
+          <Card className="card-hover border-2 border-transparent hover:border-success/30 bg-card/60 backdrop-blur-3xl animate-in shadow-xl" style={{ animationDelay: '0.2s' }}>
             <CardHeader>
               <div className="relative">
                 <div className="absolute inset-0 bg-[linear-gradient(135deg,hsl(280_85%_55%),hsl(320_85%_60%))] opacity-20 blur-xl rounded-full" />
@@ -232,7 +235,7 @@ export default function Landing() {
           {Object.entries(PLANS).map(([key, plan], index) => (
             <Card 
               key={key} 
-              className={`relative card-hover bg-gradient-to-br from-card to-card/50 backdrop-blur-sm transition-all animate-in ${
+              className={`relative card-hover bg-card/70 backdrop-blur-3xl transition-all animate-in shadow-xl ${
                 plan.popular 
                   ? 'border-primary border-2 shadow-glow scale-105' 
                   : 'border-2 border-transparent hover:border-primary/20'
@@ -334,7 +337,7 @@ export default function Landing() {
       </section>
 
       {/* Footer */}
-      <footer className="relative border-t border-border bg-card/50 backdrop-blur-sm">
+      <footer className="relative border-t border-border bg-card/70 backdrop-blur-3xl shadow-lg">
         <div className="container mx-auto px-4 py-8">
           <div className="flex flex-col md:flex-row justify-between items-center gap-4">
             <div className="flex items-center gap-2">
