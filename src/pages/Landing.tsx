@@ -7,7 +7,6 @@ import { useAuth } from '@/contexts/AuthContext';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 import { useNavigate } from 'react-router-dom';
-
 interface Plan {
   name: string;
   price: string;
@@ -17,7 +16,6 @@ interface Plan {
   features: string[];
   popular?: boolean;
 }
-
 const PLANS: Record<string, Plan> = {
   basic: {
     name: 'Basic',
@@ -25,13 +23,7 @@ const PLANS: Record<string, Plan> = {
     priceId: 'price_1SMdPGIlYUVEqT7DypsCPs1V',
     productId: 'prod_TJFvhblrHkaiTO',
     description: '1 kos / jusqu\'à 10 chambres',
-    features: [
-      'Gestion de 1 propriété',
-      'Jusqu\'à 10 chambres',
-      'Tableau de bord basique',
-      'Rappels automatiques',
-      'Support par email',
-    ],
+    features: ['Gestion de 1 propriété', 'Jusqu\'à 10 chambres', 'Tableau de bord basique', 'Rappels automatiques', 'Support par email']
   },
   pro: {
     name: 'Pro',
@@ -39,15 +31,8 @@ const PLANS: Record<string, Plan> = {
     priceId: 'price_1SMdPSIlYUVEqT7D5LmxNU2L',
     productId: 'prod_TJFvmpbjHYBN7y',
     description: 'Jusqu\'à 5 kos / 100 chambres',
-    features: [
-      'Gestion de 5 propriétés',
-      'Jusqu\'à 100 chambres',
-      'Tableau de bord avancé',
-      'Automatisation complète',
-      'Analyses et rapports',
-      'Support prioritaire',
-    ],
-    popular: true,
+    features: ['Gestion de 5 propriétés', 'Jusqu\'à 100 chambres', 'Tableau de bord avancé', 'Automatisation complète', 'Analyses et rapports', 'Support prioritaire'],
+    popular: true
   },
   enterprise: {
     name: 'Enterprise',
@@ -55,44 +40,43 @@ const PLANS: Record<string, Plan> = {
     priceId: 'price_1SMdPnIlYUVEqT7DpZ9ATIZF',
     productId: 'prod_TJFv6gUhEWoxyh',
     description: 'Illimité + support IA avancé',
-    features: [
-      'Propriétés illimitées',
-      'Chambres illimitées',
-      'Support IA avancé',
-      'API personnalisée',
-      'Formation dédiée',
-      'Support 24/7',
-    ],
-  },
+    features: ['Propriétés illimitées', 'Chambres illimitées', 'Support IA avancé', 'API personnalisée', 'Formation dédiée', 'Support 24/7']
+  }
 };
-
 export default function Landing() {
-  const { user, signInWithGoogle, subscription } = useAuth();
-  const { toast } = useToast();
+  const {
+    user,
+    signInWithGoogle,
+    subscription
+  } = useAuth();
+  const {
+    toast
+  } = useToast();
   const navigate = useNavigate();
   const [loadingPlan, setLoadingPlan] = useState<string | null>(null);
-
   const handleSubscribe = async (priceId: string, planName: string) => {
     if (!user) {
       toast({
         title: 'Authentification requise',
-        description: 'Veuillez vous connecter avec Google pour continuer',
+        description: 'Veuillez vous connecter avec Google pour continuer'
       });
       await signInWithGoogle();
       return;
     }
-
     if (planName === 'Enterprise') {
       window.location.href = 'mailto:contact@kosbot.id?subject=Demande Enterprise';
       return;
     }
-
     setLoadingPlan(planName);
     try {
-      const { data, error } = await supabase.functions.invoke('create-checkout', {
-        body: { priceId },
+      const {
+        data,
+        error
+      } = await supabase.functions.invoke('create-checkout', {
+        body: {
+          priceId
+        }
       });
-
       if (error) throw error;
       if (data?.url) {
         window.open(data.url, '_blank');
@@ -101,7 +85,7 @@ export default function Landing() {
       toast({
         title: 'Erreur',
         description: error.message,
-        variant: 'destructive',
+        variant: 'destructive'
       });
     } finally {
       setLoadingPlan(null);
@@ -113,21 +97,25 @@ export default function Landing() {
     navigate('/dashboard');
     return null;
   }
-
-  return (
-    <div className="min-h-screen bg-background relative overflow-hidden">
+  return <div className="min-h-screen bg-background relative overflow-hidden">
       {/* Dark overlay for better contrast */}
       <div className="absolute inset-0 bg-gradient-to-b from-background via-background/95 to-background/90" />
       
       {/* Animated background blobs - repositioned away from content */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none -z-10">
-        <div className="absolute -top-48 -left-48 w-[600px] h-[600px] bg-gradient-primary opacity-10 rounded-full blur-[100px] animate-float" style={{ animationDelay: '0s' }} />
-        <div className="absolute top-1/4 -right-48 w-[600px] h-[600px] bg-gradient-secondary opacity-10 rounded-full blur-[100px] animate-float" style={{ animationDelay: '2s' }} />
-        <div className="absolute -bottom-48 left-1/4 w-[600px] h-[600px] bg-gradient-accent opacity-8 rounded-full blur-[100px] animate-float" style={{ animationDelay: '4s' }} />
+        <div className="absolute -top-48 -left-48 w-[600px] h-[600px] bg-gradient-primary opacity-10 rounded-full blur-[100px] animate-float" style={{
+        animationDelay: '0s'
+      }} />
+        <div className="absolute top-1/4 -right-48 w-[600px] h-[600px] bg-gradient-secondary opacity-10 rounded-full blur-[100px] animate-float" style={{
+        animationDelay: '2s'
+      }} />
+        <div className="absolute -bottom-48 left-1/4 w-[600px] h-[600px] bg-gradient-accent opacity-8 rounded-full blur-[100px] animate-float" style={{
+        animationDelay: '4s'
+      }} />
       </div>
 
       {/* Banner */}
-      <div className="relative bg-gradient-primary/90 backdrop-blur-xl text-white py-2 px-4 text-center text-sm font-medium animate-in shadow-lg z-50">
+      <div className="relative bg-gradient-primary/90 backdrop-blur-xl text-white py-2 px-4 text-center text-sm font-medium animate-in shadow-lg z-50 bg-slate-950 rounded-none">
         ✨ Essai gratuit 7 jours — sans carte bancaire
       </div>
 
@@ -154,16 +142,15 @@ export default function Landing() {
             <br />
             <span className="text-foreground">en toute simplicité</span>
           </h1>
-          <p className="text-xl text-muted-foreground mb-8 max-w-2xl mx-auto animate-in" style={{ animationDelay: '0.1s' }}>
+          <p className="text-xl text-muted-foreground mb-8 max-w-2xl mx-auto animate-in" style={{
+          animationDelay: '0.1s'
+        }}>
             Automatisez vos paiements, suivez vos locataires et maximisez votre taux d'occupation. 
             Pendant que KosBot travaille pour vous.
           </p>
-          <Button 
-            size="lg" 
-            onClick={signInWithGoogle} 
-            className="animate-scale-in bg-gradient-primary hover:bg-gradient-hover text-white shadow-glow transition-all hover:scale-105 hover:shadow-[0_0_40px_hsl(189_85%_45%/0.4)]"
-            style={{ animationDelay: '0.2s' }}
-          >
+          <Button size="lg" onClick={signInWithGoogle} className="animate-scale-in bg-gradient-primary hover:bg-gradient-hover text-white shadow-glow transition-all hover:scale-105 hover:shadow-[0_0_40px_hsl(189_85%_45%/0.4)]" style={{
+          animationDelay: '0.2s'
+        }}>
             Essayer gratuitement
             <ArrowRight className="ml-2 h-5 w-5" />
           </Button>
@@ -173,7 +160,9 @@ export default function Landing() {
       {/* Features Section */}
       <section className="relative container mx-auto px-4 py-20">
         <div className="grid md:grid-cols-3 gap-8">
-          <Card className="card-hover border-2 border-transparent hover:border-primary/30 bg-card/60 backdrop-blur-3xl animate-in shadow-xl" style={{ animationDelay: '0s' }}>
+          <Card className="card-hover border-2 border-transparent hover:border-primary/30 bg-card/60 backdrop-blur-3xl animate-in shadow-xl" style={{
+          animationDelay: '0s'
+        }}>
             <CardHeader>
               <div className="relative">
                 <div className="absolute inset-0 bg-gradient-primary opacity-20 blur-xl rounded-full" />
@@ -188,11 +177,15 @@ export default function Landing() {
             </CardContent>
           </Card>
 
-          <Card className="card-hover border-2 border-transparent hover:border-accent/30 bg-card/60 backdrop-blur-3xl animate-in shadow-xl" style={{ animationDelay: '0.1s' }}>
+          <Card className="card-hover border-2 border-transparent hover:border-accent/30 bg-card/60 backdrop-blur-3xl animate-in shadow-xl" style={{
+          animationDelay: '0.1s'
+        }}>
             <CardHeader>
               <div className="relative">
                 <div className="absolute inset-0 bg-gradient-accent opacity-20 blur-xl rounded-full" />
-                <BarChart className="h-12 w-12 text-accent mb-4 relative z-10 animate-float" style={{ animationDelay: '1s' }} />
+                <BarChart className="h-12 w-12 text-accent mb-4 relative z-10 animate-float" style={{
+                animationDelay: '1s'
+              }} />
               </div>
               <CardTitle className="text-foreground">Suivi en temps réel</CardTitle>
             </CardHeader>
@@ -203,11 +196,15 @@ export default function Landing() {
             </CardContent>
           </Card>
 
-          <Card className="card-hover border-2 border-transparent hover:border-success/30 bg-card/60 backdrop-blur-3xl animate-in shadow-xl" style={{ animationDelay: '0.2s' }}>
+          <Card className="card-hover border-2 border-transparent hover:border-success/30 bg-card/60 backdrop-blur-3xl animate-in shadow-xl" style={{
+          animationDelay: '0.2s'
+        }}>
             <CardHeader>
               <div className="relative">
                 <div className="absolute inset-0 bg-[linear-gradient(135deg,hsl(280_85%_55%),hsl(320_85%_60%))] opacity-20 blur-xl rounded-full" />
-                <Shield className="h-12 w-12 text-success mb-4 relative z-10 animate-float" style={{ animationDelay: '2s' }} />
+                <Shield className="h-12 w-12 text-success mb-4 relative z-10 animate-float" style={{
+                animationDelay: '2s'
+              }} />
               </div>
               <CardTitle className="text-foreground">Données sécurisées</CardTitle>
             </CardHeader>
@@ -232,21 +229,12 @@ export default function Landing() {
         </div>
 
         <div className="grid md:grid-cols-3 gap-8 max-w-6xl mx-auto">
-          {Object.entries(PLANS).map(([key, plan], index) => (
-            <Card 
-              key={key} 
-              className={`relative card-hover bg-card/70 backdrop-blur-3xl transition-all animate-in shadow-xl ${
-                plan.popular 
-                  ? 'border-primary border-2 shadow-glow scale-105' 
-                  : 'border-2 border-transparent hover:border-primary/20'
-              }`}
-              style={{ animationDelay: `${index * 0.1}s` }}
-            >
-              {plan.popular && (
-                <div className="absolute -top-4 left-1/2 -translate-x-1/2 bg-gradient-primary text-white px-4 py-1 rounded-full text-sm font-medium shadow-glow animate-scale-in">
+          {Object.entries(PLANS).map(([key, plan], index) => <Card key={key} className={`relative card-hover bg-card/70 backdrop-blur-3xl transition-all animate-in shadow-xl ${plan.popular ? 'border-primary border-2 shadow-glow scale-105' : 'border-2 border-transparent hover:border-primary/20'}`} style={{
+          animationDelay: `${index * 0.1}s`
+        }}>
+              {plan.popular && <div className="absolute -top-4 left-1/2 -translate-x-1/2 bg-gradient-primary text-white px-4 py-1 rounded-full text-sm font-medium shadow-glow animate-scale-in">
                   Plus populaire
-                </div>
-              )}
+                </div>}
               <CardHeader>
                 <CardTitle>{plan.name}</CardTitle>
                 <CardDescription>{plan.description}</CardDescription>
@@ -257,30 +245,18 @@ export default function Landing() {
               </CardHeader>
               <CardContent>
                 <ul className="space-y-3">
-                  {plan.features.map((feature, i) => (
-                    <li key={i} className="flex items-center gap-2">
+                  {plan.features.map((feature, i) => <li key={i} className="flex items-center gap-2">
                       <Check className="h-5 w-5 text-primary flex-shrink-0" />
                       <span className="text-sm">{feature}</span>
-                    </li>
-                  ))}
+                    </li>)}
                 </ul>
               </CardContent>
               <CardFooter>
-                <Button 
-                  className={`w-full transition-all ${
-                    plan.popular 
-                      ? 'bg-gradient-primary hover:bg-gradient-hover text-white shadow-glow hover:shadow-[0_0_40px_hsl(189_85%_45%/0.4)] hover:scale-105' 
-                      : 'hover:border-primary hover:shadow-glow'
-                  }`}
-                  variant={plan.popular ? 'default' : 'outline'}
-                  onClick={() => handleSubscribe(plan.priceId, plan.name)}
-                  disabled={loadingPlan === plan.name}
-                >
+                <Button className={`w-full transition-all ${plan.popular ? 'bg-gradient-primary hover:bg-gradient-hover text-white shadow-glow hover:shadow-[0_0_40px_hsl(189_85%_45%/0.4)] hover:scale-105' : 'hover:border-primary hover:shadow-glow'}`} variant={plan.popular ? 'default' : 'outline'} onClick={() => handleSubscribe(plan.priceId, plan.name)} disabled={loadingPlan === plan.name}>
                   {loadingPlan === plan.name ? 'Chargement...' : 'S\'abonner'}
                 </Button>
               </CardFooter>
-            </Card>
-          ))}
+            </Card>)}
         </div>
       </section>
 
@@ -361,6 +337,5 @@ export default function Landing() {
           </div>
         </div>
       </footer>
-    </div>
-  );
+    </div>;
 }
