@@ -205,7 +205,6 @@ export type Database = {
           price_monthly: number
           property_id: string
           status: string
-          tenant_id: string | null
           updated_at: string
         }
         Insert: {
@@ -216,7 +215,6 @@ export type Database = {
           price_monthly: number
           property_id: string
           status?: string
-          tenant_id?: string | null
           updated_at?: string
         }
         Update: {
@@ -227,17 +225,9 @@ export type Database = {
           price_monthly?: number
           property_id?: string
           status?: string
-          tenant_id?: string | null
           updated_at?: string
         }
         Relationships: [
-          {
-            foreignKeyName: "fk_rooms_tenant"
-            columns: ["tenant_id"]
-            isOneToOne: false
-            referencedRelation: "tenants"
-            referencedColumns: ["id"]
-          },
           {
             foreignKeyName: "rooms_owner_id_fkey"
             columns: ["owner_id"]

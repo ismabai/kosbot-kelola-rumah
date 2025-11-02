@@ -103,13 +103,12 @@ export default function Tenants() {
 
       if (error) throw error;
 
-      // Update room status and tenant_id if room is selected
+      // Update room status if room is selected
       if (formData.room_id && newTenant) {
         await supabase
           .from('rooms')
           .update({ 
-            status: 'occupied',
-            tenant_id: newTenant.id 
+            status: 'occupied'
           })
           .eq('id', formData.room_id);
       }
