@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Plus, DoorOpen, Building2, Search } from 'lucide-react';
+import { Plus, DoorOpen, Building2, Trash2, Edit } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
@@ -12,6 +12,17 @@ import { useAuth } from '@/contexts/AuthContext';
 import { supabase } from '@/integrations/supabase/client';
 import { canAddRoom, getLimitMessage } from '@/services/limits';
 import { Paywall } from '@/components/paywall/Paywall';
+import { useRoomActions } from '@/hooks/useRoomActions';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from '@/components/ui/alert-dialog';
 
 export default function Rooms() {
   const { user, profile } = useAuth();
@@ -21,6 +32,9 @@ export default function Rooms() {
   const [loading, setLoading] = useState(true);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [isPaywallOpen, setIsPaywallOpen] = useState(false);
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [roomToDelete, setRoomToDelete] = useState<string | null>(null);
+  const { deleteRoom, isDeleting } = useRoomActions();
   const [formData, setFormData] = useState({
     property_id: '',
     name: '',
@@ -223,9 +237,22 @@ export default function Rooms() {
                     )}
                   </div>
                   
-                  <Button variant="outline" size="sm" className="w-full">
-                    View Details
-                  </Button>
+                  <div className="flex gap-2">
+                    <Button variant="outline" size="sm" className="flex-1">
+                      <Edit className="h-3 w-3 mr-1" />
+                      Edit
+                    </Button>
+                    <Button 
+                      variant="destructive" 
+                      size="sm"
+                      onClick={() => {
+                        setRoomToDelete(room.id);
+                        setDeleteDialogOpen(true);
+                      }}
+                    >
+                      <Trash2 className="h-3 w-3" />
+                    </Button>
+                  </div>
                 </CardContent>
               </Card>
             );
@@ -239,6 +266,34 @@ export default function Rooms() {
         message={getLimitMessage('room', profile?.plan as any)}
         currentPlan={profile?.plan as any}
       />
+
+      <AlertDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Delete Room</AlertDialogTitle>
+            <AlertDialogDescription>
+              Are you sure you want to delete this room? This action cannot be undone.
+              Occupied rooms cannot be deleted.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={() => {
+                if (roomToDelete) {
+                  deleteRoom(roomToDelete, () => {
+                    loadData();
+                    setDeleteDialogOpen(false);
+                  });
+                }
+              }}
+              disabled={isDeleting}
+            >
+              {isDeleting ? 'Deleting...' : 'Delete'}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 }

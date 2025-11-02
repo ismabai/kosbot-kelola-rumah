@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Plus, Building2, MapPin } from 'lucide-react';
+import { Plus, Building2, MapPin, Trash2, Edit } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
@@ -11,14 +11,30 @@ import { supabase } from '@/integrations/supabase/client';
 import { canAddProperty, getLimitMessage } from '@/services/limits';
 import { Paywall } from '@/components/paywall/Paywall';
 import { Badge } from '@/components/ui/badge';
+import { usePropertyActions } from '@/hooks/usePropertyActions';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from '@/components/ui/alert-dialog';
+import { useNavigate } from 'react-router-dom';
 
 export default function Properties() {
   const { user, profile } = useAuth();
   const { toast } = useToast();
+  const navigate = useNavigate();
   const [properties, setProperties] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [isPaywallOpen, setIsPaywallOpen] = useState(false);
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [propertyToDelete, setPropertyToDelete] = useState<string | null>(null);
+  const { deleteProperty, isDeleting } = usePropertyActions();
   const [formData, setFormData] = useState({
     name: '',
     address: '',
@@ -206,8 +222,25 @@ export default function Properties() {
                       </div>
                     </div>
                   </div>
-                  <div className="mt-4 pt-4 border-t border-border">
-                    <Button variant="outline" className="w-full">View Details</Button>
+                  <div className="mt-4 pt-4 border-t border-border flex gap-2">
+                    <Button 
+                      variant="outline" 
+                      className="flex-1"
+                      onClick={() => navigate(`/properties/${property.id}`)}
+                    >
+                      <Edit className="h-4 w-4 mr-2" />
+                      Edit
+                    </Button>
+                    <Button 
+                      variant="destructive" 
+                      size="icon"
+                      onClick={() => {
+                        setPropertyToDelete(property.id);
+                        setDeleteDialogOpen(true);
+                      }}
+                    >
+                      <Trash2 className="h-4 w-4" />
+                    </Button>
                   </div>
                 </CardContent>
               </Card>
@@ -222,6 +255,34 @@ export default function Properties() {
         message={getLimitMessage('property', profile?.plan as any)}
         currentPlan={profile?.plan as any}
       />
+
+      <AlertDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Delete Property</AlertDialogTitle>
+            <AlertDialogDescription>
+              Are you sure you want to delete this property? This action cannot be undone.
+              All associated rooms must be removed first.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={() => {
+                if (propertyToDelete) {
+                  deleteProperty(propertyToDelete, () => {
+                    loadProperties();
+                    setDeleteDialogOpen(false);
+                  });
+                }
+              }}
+              disabled={isDeleting}
+            >
+              {isDeleting ? 'Deleting...' : 'Delete'}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 }

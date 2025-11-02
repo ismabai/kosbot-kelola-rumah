@@ -3,9 +3,11 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { useDashboardData } from "@/hooks/useDashboardData";
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
+import { useNavigate } from 'react-router-dom';
 
 export default function Dashboard() {
   const { kpis: kpiData, quick: quickStats, tasks: recentTasks, revenue, loading } = useDashboardData();
+  const navigate = useNavigate();
 
   if (loading) {
     return <div className="flex items-center justify-center min-h-[400px]">Loading dashboard...</div>;
@@ -90,7 +92,7 @@ export default function Dashboard() {
               <CardTitle>Tasks Due Today</CardTitle>
               <CardDescription>Important tasks that need your attention</CardDescription>
             </div>
-            <Button variant="outline" size="sm">View All</Button>
+            <Button variant="outline" size="sm" onClick={() => navigate('/tasks')}>View All</Button>
           </div>
         </CardHeader>
         <CardContent>
